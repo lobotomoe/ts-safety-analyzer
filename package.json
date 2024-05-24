@@ -6,8 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "typescript",
+    "safety",
+    "analyzer"
+  ],
+  "author": "Alex Kraiz",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.12.12",
