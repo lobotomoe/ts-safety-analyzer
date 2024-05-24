@@ -1,10 +1,14 @@
 {
   "name": "tssa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "TypeScript Safety Analyzer — a tool for analyzing TypeScript code for safety",
   "main": "lib/index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "tssa": "./bin/tssa"
   },
   "keywords": [
     "typescript",
@@ -26,6 +30,7 @@
     "typescript-eslint-parser": "^18.0.0"
   },
   "files": [
+    "bin",
     "lib"
   ],
   "types": "lib/index.d.ts",
