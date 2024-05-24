@@ -1,0 +1,33 @@
+{
+  "name": "tssa",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lobotomoe/ts-safety-analyzer"
+  },
+  "dependencies": {
+    "eslint": "^9.3.0",
+    "typescript-eslint-parser": "^18.0.0"
+  },
+  "files": [
+    "lib"
+  ],
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    }
+  }
+}
