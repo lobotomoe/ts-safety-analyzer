@@ -1,7 +1,7 @@
 {
   "name": "tssa",
   "version": "0.1.0",
-  "description": "",
+  "description": "TypeScript Safety Analyzer — a tool for analyzing TypeScript code for safety",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
