@@ -1,5 +1,8 @@
 # TS Safety Analyzer
 
+> [!WARNING]
+> This tool is still in development and may not work as expected !!!
+
 ## Installation
 
 ```bash
