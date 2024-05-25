@@ -1,6 +1,6 @@
 {
   "name": "tssa",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "TypeScript Safety Analyzer — a tool for analyzing TypeScript code for safety",
   "main": "lib/index.js",
   "scripts": {
