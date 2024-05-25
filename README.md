@@ -17,3 +17,9 @@ By default, the tool will analyze the current directory. You can also specify a 
 ```bash
 tssa path/to/directory
 ```
+
+### Enable logging:
+
+```bash
+tssa --log
+```

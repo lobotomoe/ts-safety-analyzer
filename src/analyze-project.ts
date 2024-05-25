@@ -4,9 +4,13 @@ import analyzeFiles from "./analyze-files";
 
 const DEFAULT_TS_CONFIG_NAME = "tsconfig.json";
 const TEST_FILE_SUFFIXES = [".test.ts", ".test-d.ts"];
+const EXCLUDE_DIRS = ["node_modules", "dist", "build", "out"];
+const EXCLUDE_FILES = ["webpack.config.js", "rollup.config.js"];
+
 export default async function analyzeProject(
   projectDir: string,
-  configPath = DEFAULT_TS_CONFIG_NAME
+  configPath = DEFAULT_TS_CONFIG_NAME,
+  isLogEnabled = false
 ): Promise<void> {
   const absoluteProjectDir = path.resolve(projectDir);
   console.log(`Analyzing TypeScript project at ${absoluteProjectDir}`);
@@ -72,11 +76,20 @@ export default async function analyzeProject(
     console.error(`!!! 'allowJs' is enabled in tsconfig !!!`);
   }
 
-  // Exclude test files from analysis
-  const files = fileNames.filter(
-    (fileName) =>
-      !TEST_FILE_SUFFIXES.some((suffix) => fileName.endsWith(suffix))
-  );
+  // Exclude test files and other unnecessary files from analysis
+  const files = fileNames.filter((fileName) => {
+    const isTestFile = TEST_FILE_SUFFIXES.some((suffix) =>
+      fileName.endsWith(suffix)
+    );
+    const isExcludedDir = EXCLUDE_DIRS.some((dir) =>
+      fileName.includes(path.join(projectDir, dir))
+    );
+    const isExcludedFile = EXCLUDE_FILES.some((file) =>
+      fileName.endsWith(file)
+    );
 
-  await analyzeFiles(files, absoluteTSConfigPath);
+    return !isTestFile && !isExcludedDir && !isExcludedFile;
+  });
+
+  await analyzeFiles(files, absoluteTSConfigPath, isLogEnabled);
 }

@@ -3,11 +3,25 @@
 const analyzeProject = require("../lib/analyze-project").default;
 
 async function main() {
-  const projectDir = process.argv[2] ?? process.cwd();
-  await analyzeProject(projectDir);
+  const args = process.argv.slice(2);
+  const projectDir = args.find((arg) => !arg.startsWith("--")) || process.cwd();
+  const logEnabled = args.includes("--log");
+
+  if (args.includes("--help") || args.includes("-h")) {
+    console.error("Usage: analyze-project <projectDir> [--log]");
+    process.exit(1);
+  }
+
+  if (logEnabled) {
+    console.log(`Analyzing project in directory: ${projectDir}`);
+  }
+
+  try {
+    await analyzeProject(projectDir, undefined, logEnabled);
+  } catch (err) {
+    console.error("Error during analysis:", err);
+    process.exit(1);
+  }
 }
 
-main().catch((err) => {
-  console.error("Error during analysis:", err);
-  process.exit(1);
-});
+main();

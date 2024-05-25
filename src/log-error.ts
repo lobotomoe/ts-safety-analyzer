@@ -1,10 +1,12 @@
-export default function logError(
-  fileName: string,
-  line: number,
-  character: number,
-  lineText: string,
-  message: string
-): void {
+import { Issue } from "./types";
+
+export default function logError({
+  fileName,
+  line,
+  character,
+  lineText,
+  message,
+}: Issue): void {
   console.error(`[Error] ${message}`);
   console.error(`File: ${fileName}:${line + 1}:${character + 1}`);
   console.error(`Line content: ${lineText.trim()}`);

@@ -1,12 +1,19 @@
 import ts from "typescript";
 import analyzeNode from "./analyze-node";
+import { Issue } from "./types";
 
 export default function analyzeFile(
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker
-): void {
+): Issue[] {
   // Recursively visit all children of the current node
+
+  let issues: Issue[] = [];
+
   ts.forEachChild(sourceFile, (node) => {
-    analyzeNode(node, checker);
+    const nodeIssues = analyzeNode(node, sourceFile, checker);
+    issues = issues.concat(nodeIssues);
   });
+
+  return issues;
 }
