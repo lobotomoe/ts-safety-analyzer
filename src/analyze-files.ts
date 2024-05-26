@@ -1,23 +1,9 @@
 import ts from "typescript";
 import analyzeFile from "./analyze-file";
 import { Issue } from "./types";
-import logError from "./log-error";
+import isNonProjectFile from "./is-non-project-file";
 
-function isNonProjectFile(
-  sourceFile: ts.SourceFile,
-  program: ts.Program
-): boolean {
-  return (
-    sourceFile.isDeclarationFile ||
-    program.isSourceFileFromExternalLibrary(sourceFile)
-  );
-}
-
-async function analyzeFiles(
-  files: string[],
-  tsConfigPath: string,
-  isLogEnabled: boolean
-): Promise<void> {
+function analyzeFiles(files: string[], tsConfigPath: string) {
   const program = ts.createProgram(files, { configFilePath: tsConfigPath });
   const checker = program.getTypeChecker();
 
@@ -36,15 +22,11 @@ async function analyzeFiles(
     issues.push(...fileIssues);
   }
 
-  if (isLogEnabled) {
-    issues.forEach((issue) => {
-      logError(issue);
-    });
-  }
-
-  console.log(`Total lines: ${totalLines}`);
-  console.log(`Total issues: ${issues.length}`);
-  console.log(`Skipped files: ${skippedFiles}`);
+  return {
+    totalLines,
+    issues,
+    skippedFiles,
+  };
 }
 
 export default analyzeFiles;

@@ -1,17 +1,19 @@
 import path from "path";
 import ts from "typescript";
 import analyzeFiles from "./analyze-files";
+import logError from "./log-error";
+import { MAX_SCORE } from "./constants";
 
 const DEFAULT_TS_CONFIG_NAME = "tsconfig.json";
 const TEST_FILE_SUFFIXES = [".test.ts", ".test-d.ts"];
 const EXCLUDE_DIRS = ["node_modules", "dist", "build", "out"];
 const EXCLUDE_FILES = ["webpack.config.js", "rollup.config.js"];
 
-export default async function analyzeProject(
+export default function analyzeProject(
   projectDir: string,
   configPath = DEFAULT_TS_CONFIG_NAME,
   isLogEnabled = false
-): Promise<void> {
+) {
   const absoluteProjectDir = path.resolve(projectDir);
   console.log(`Analyzing TypeScript project at ${absoluteProjectDir}`);
   const absoluteTSConfigPath = path.resolve(absoluteProjectDir, configPath);
@@ -91,5 +93,26 @@ export default async function analyzeProject(
     return !isTestFile && !isExcludedDir && !isExcludedFile;
   });
 
-  await analyzeFiles(files, absoluteTSConfigPath, isLogEnabled);
+  const { issues, skippedFiles, totalLines } = analyzeFiles(
+    files,
+    absoluteTSConfigPath
+  );
+
+  if (isLogEnabled) {
+    issues.forEach((issue) => {
+      logError(issue);
+    });
+  }
+
+  const score = Math.max(
+    MAX_SCORE - (issues.length / totalLines) * MAX_SCORE,
+    0
+  );
+
+  return {
+    totalLines,
+    issues,
+    skippedFiles,
+    score,
+  };
 }

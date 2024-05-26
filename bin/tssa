@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const analyzeProject = require("../lib/analyze-project").default;
+const constants = require("../lib/constants");
 
 async function main() {
   const args = process.argv.slice(2);
@@ -17,7 +18,16 @@ async function main() {
   }
 
   try {
-    await analyzeProject(projectDir, undefined, logEnabled);
+    const { totalLines, issues, skippedFiles, score } = analyzeProject(
+      projectDir,
+      undefined,
+      logEnabled
+    );
+
+    console.log(`Total lines: ${totalLines}`);
+    console.log(`Total issues: ${issues.length}`);
+    console.log(`Skipped files: ${skippedFiles}`);
+    console.log(`Score: ${score.toFixed(2)} / ${constants.MAX_SCORE}`);
   } catch (err) {
     console.error("Error during analysis:", err);
     process.exit(1);

@@ -26,3 +26,17 @@ tssa path/to/directory
 ```bash
 tssa --log
 ```
+
+### API
+
+```typescript
+import { analyzeProject, constants } from "tssa";
+
+const { totalLines, issues, skippedFiles, score } =
+  analyzeProject("path/to/directory");
+
+console.log(`Total lines: ${totalLines}`);
+console.log(`Total issues: ${issues.length}`);
+console.log(`Skipped files: ${skippedFiles}`);
+console.log(`Score: ${score.toFixed(2)} / ${constants.MAX_SCORE}`);
+```
