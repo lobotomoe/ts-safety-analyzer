@@ -1,6 +1,6 @@
 {
   "name": "tssa",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "TypeScript Safety Analyzer — a tool for analyzing TypeScript code for safety",
   "keywords": [
     "analyzer",
@@ -29,7 +29,8 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc"
+    "clean": "rm -rf lib",
+    "build": "npm run clean && tsc"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",

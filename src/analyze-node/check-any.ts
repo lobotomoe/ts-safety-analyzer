@@ -24,7 +24,7 @@ export default function checkAny(
           line,
           character,
           lineText: getLineText(sourceFile, pos),
-          message: `UNSAFE usage of 'any' type detected`,
+          message: `Usage of 'any' type detected`,
         };
       }
     } else {

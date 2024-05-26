@@ -41,7 +41,7 @@ export default function checkTypeCasting(
           line,
           character,
           lineText: getLineText(sourceFile, pos),
-          message: `UNSAFE type casting to 'any' detected`,
+          message: `Type casting to 'any' detected`,
         };
       } else if (type.flags & ts.TypeFlags.Unknown) {
         // Type casting to 'unknown' actually safe
@@ -59,7 +59,7 @@ export default function checkTypeCasting(
             line,
             character,
             lineText: getLineText(sourceFile, pos),
-            message: `UNSAFE type casting from 'unknown' to '${innerTypeName}' detected`,
+            message: `Type casting from 'unknown' to '${innerTypeName}' detected`,
           };
         }
       } else {

@@ -1,13 +1,18 @@
 import path from "path";
 import ts from "typescript";
 import analyzeFiles from "./analyze-files";
-import logError from "./log-error";
+import log from "./log";
 import { MAX_SCORE } from "./constants";
 
 const DEFAULT_TS_CONFIG_NAME = "tsconfig.json";
+const EXCLUDE_EXTENSIONS = [".d.ts", ".json", ".js", ".jsx", ".mjs", ".cjs"];
 const TEST_FILE_SUFFIXES = [".test.ts", ".test-d.ts"];
-const EXCLUDE_DIRS = ["node_modules", "dist", "build", "out"];
-const EXCLUDE_FILES = ["webpack.config.js", "rollup.config.js"];
+const EXCLUDE_DIRS = ["tests", "examples"];
+const EXCLUDE_FILES = [
+  "webpack.config.js",
+  "rollup.config.js",
+  "jest.config.js",
+];
 
 export default function analyzeProject(
   projectDir: string,
@@ -80,17 +85,26 @@ export default function analyzeProject(
 
   // Exclude test files and other unnecessary files from analysis
   const files = fileNames.filter((fileName) => {
+    const ext = path.extname(fileName);
+    if (EXCLUDE_EXTENSIONS.includes(ext)) {
+      return false;
+    }
     const isTestFile = TEST_FILE_SUFFIXES.some((suffix) =>
       fileName.endsWith(suffix)
     );
+    if (isTestFile) {
+      return false;
+    }
     const isExcludedDir = EXCLUDE_DIRS.some((dir) =>
-      fileName.includes(path.join(projectDir, dir))
+      fileName.split(path.sep).includes(dir)
     );
+    if (isExcludedDir) {
+      return false;
+    }
     const isExcludedFile = EXCLUDE_FILES.some((file) =>
       fileName.endsWith(file)
     );
-
-    return !isTestFile && !isExcludedDir && !isExcludedFile;
+    return !isExcludedFile;
   });
 
   const { issues, skippedFiles, totalLines } = analyzeFiles(
@@ -100,7 +114,7 @@ export default function analyzeProject(
 
   if (isLogEnabled) {
     issues.forEach((issue) => {
-      logError(issue);
+      log(issue);
     });
   }
 

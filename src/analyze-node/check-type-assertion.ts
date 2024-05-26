@@ -22,7 +22,7 @@ export default function checkTypeAssertion(
         line,
         character,
         lineText: getLineText(sourceFile, pos),
-        message: `UNSAFE type assertion to 'any' detected`,
+        message: `Type assertion to 'any' detected`,
       };
     }
   }
