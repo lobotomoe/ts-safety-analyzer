@@ -8,12 +8,16 @@ export default function analyzeFile(
 ): Issue[] {
   // Recursively visit all children of the current node
 
-  let issues: Issue[] = [];
+  const issues: Map<string, Issue> = new Map();
 
   ts.forEachChild(sourceFile, (node) => {
     const nodeIssues = analyzeNode(node, sourceFile, checker);
-    issues = issues.concat(nodeIssues);
+    nodeIssues.forEach((issue, hash) => {
+      issues.set(hash, issue);
+    });
   });
 
-  return issues;
+  const issuesArray = Array.from(issues.values());
+
+  return issuesArray;
 }

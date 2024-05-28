@@ -5,17 +5,19 @@ import checkTypeCasting from "./check-type-casting";
 import checkNonNullAssertion from "./check-non-null-assertion";
 import checkCompilerDirectives from "./check-compiler-directives";
 import { Issue } from "../types";
+import hashIssue from "../hash-issue";
 
 function analyzeNode(
   node: ts.Node,
   sourceFile: ts.SourceFile,
   checker: ts.TypeChecker
-): Issue[] {
-  const issues: Issue[] = [];
+): Map<string, Issue> {
+  const issues = new Map<string, Issue>();
 
   const checkAnyResult = checkAny(node, checker, sourceFile);
   if (checkAnyResult) {
-    issues.push(checkAnyResult);
+    const hash = hashIssue(checkAnyResult);
+    issues.set(hash, checkAnyResult);
   }
   const checkTypeAssertionResult = checkTypeAssertion(
     node,
@@ -23,32 +25,35 @@ function analyzeNode(
     sourceFile
   );
   if (checkTypeAssertionResult) {
-    issues.push(checkTypeAssertionResult);
+    const hash = hashIssue(checkTypeAssertionResult);
+    issues.set(hash, checkTypeAssertionResult);
   }
   const checkTypeCastingResult = checkTypeCasting(node, checker, sourceFile);
   if (checkTypeCastingResult) {
-    issues.push(checkTypeCastingResult);
+    const hash = hashIssue(checkTypeCastingResult);
+    issues.set(hash, checkTypeCastingResult);
   }
   const checkNonNullAssertionResult = checkNonNullAssertion(node, sourceFile);
   if (checkNonNullAssertionResult) {
-    issues.push(checkNonNullAssertionResult);
+    const hash = hashIssue(checkNonNullAssertionResult);
+    issues.set(hash, checkNonNullAssertionResult);
   }
   const checkCompilerDirectivesResult = checkCompilerDirectives(
     node,
     sourceFile
   );
   if (checkCompilerDirectivesResult) {
-    issues.push(checkCompilerDirectivesResult);
+    const hash = hashIssue(checkCompilerDirectivesResult);
+    issues.set(hash, checkCompilerDirectivesResult);
   }
-
-  let childrenIssues: Issue[] = [];
 
   ts.forEachChild(node, (child) => {
     const childIssues = analyzeNode(child, sourceFile, checker);
-    childrenIssues = issues.concat(childIssues);
+    childIssues.forEach((childIssue) => {
+      const hash = hashIssue(childIssue);
+      issues.set(hash, childIssue);
+    });
   });
-
-  issues.push(...childrenIssues);
 
   return issues;
 }

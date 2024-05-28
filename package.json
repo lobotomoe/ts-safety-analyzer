@@ -1,6 +1,6 @@
 {
   "name": "tssa",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "TypeScript Safety Analyzer — a tool for analyzing TypeScript code for safety",
   "keywords": [
     "analyzer",
