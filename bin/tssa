@@ -2,6 +2,7 @@
 
 const analyzeProject = require("../lib/analyze-project").default;
 const constants = require("../lib/constants");
+const packageJson = require("../package.json");
 
 async function main() {
   const args = process.argv.slice(2);
@@ -13,15 +14,18 @@ async function main() {
     process.exit(1);
   }
 
-  if (logEnabled) {
-    console.log(`Analyzing project in directory: ${projectDir}`);
-  }
-
   try {
-    const { totalLines, issues, skippedFiles, score } = analyzeProject(
-      projectDir,
-      undefined,
-      logEnabled
+    const {
+      totalLines,
+      issues,
+      skippedFiles,
+      score,
+      absoluteProjectDir,
+      absoluteTSConfigPath,
+    } = analyzeProject(projectDir, undefined, logEnabled);
+
+    console.log(
+      `Analyzed project: ${absoluteProjectDir} (${absoluteTSConfigPath}) using version ${packageJson.version}`
     );
 
     console.log(`Total lines: ${totalLines}`);

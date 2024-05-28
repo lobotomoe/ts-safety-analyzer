@@ -20,14 +20,11 @@ export default function analyzeProject(
   isLogEnabled = false
 ) {
   const absoluteProjectDir = path.resolve(projectDir);
-  console.log(`Analyzing TypeScript project at ${absoluteProjectDir}`);
   const absoluteTSConfigPath = path.resolve(absoluteProjectDir, configPath);
-  console.log(`Using tsconfig at ${absoluteTSConfigPath}`);
 
   const tsConfig = ts.readConfigFile(absoluteTSConfigPath, ts.sys.readFile);
   if (tsConfig.error) {
-    console.error(`Failed to read tsconfig: ${tsConfig.error.messageText}`);
-    return;
+    throw new Error(`Failed to read tsconfig: ${tsConfig.error.messageText}`);
   }
 
   const parseConfigHost: ts.ParseConfigHost = {
@@ -45,16 +42,12 @@ export default function analyzeProject(
   const { fileNames, errors, options } = parsedCommandLine;
 
   if (errors.length > 0) {
-    console.error("Failed to parse tsconfig:");
-    errors.forEach((error) => {
-      console.error(error.messageText);
-    });
-    return;
+    const messages = errors.map((error) => error.messageText);
+    throw new Error(`Failed to parse tsconfig: ${messages.join("\n")}`);
   }
 
   if (fileNames.length === 0) {
-    console.log("No files to analyze");
-    return;
+    throw new Error("No files to analyze");
   }
 
   // Already here we can do some basic analysis of the project
@@ -64,25 +57,12 @@ export default function analyzeProject(
   // 4. Is JS allowed in the project?
 
   const isStrictEnabled = options.strict ?? false;
-  if (!isStrictEnabled) {
-    console.error(`!!! 'strict' is not enabled in tsconfig !!!`);
-  }
   const isNoImplicitAnyEnabled =
     options.noImplicitAny ?? isStrictEnabled ?? false;
-  if (!isNoImplicitAnyEnabled) {
-    console.error(`!!! 'noImplicitAny' is not enabled in tsconfig !!!`);
-  }
   const isStrictNullChecksEnabled =
     options.strictNullChecks ?? isStrictEnabled ?? false;
-  if (!isStrictNullChecksEnabled) {
-    console.error(`!!! 'strictNullChecks' is not enabled in tsconfig !!!`);
-  }
 
   const isJSAllowed = options.allowJs ?? false;
-  if (isJSAllowed) {
-    console.error(`!!! 'allowJs' is enabled in tsconfig !!!`);
-  }
-
   // Exclude test files and other unnecessary files from analysis
   const files = fileNames.filter((fileName) => {
     const ext = path.extname(fileName);
@@ -124,6 +104,14 @@ export default function analyzeProject(
   );
 
   return {
+    absoluteProjectDir,
+    absoluteTSConfigPath,
+    compiler: {
+      isStrictEnabled,
+      isNoImplicitAnyEnabled,
+      isStrictNullChecksEnabled,
+      isJSAllowed,
+    },
     totalLines,
     issues,
     skippedFiles,
